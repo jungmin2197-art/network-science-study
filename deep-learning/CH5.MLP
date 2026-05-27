@@ -1,0 +1,288 @@
+# Multilayer Perceptrons (MLP)
+
+## 왜 필요한가
+
+Linear Regression과 Softmax Regression은 선형 관계만 표현 가능하다.
+
+하지만 현실 데이터는 대부분 nonlinear하다.
+
+예:
+
+- 이미지
+- 자연어
+- 음성
+- 복잡한 패턴 데이터
+
+는 단순 선형 모델만으로 표현하기 어렵다.
+
+MLP는 hidden layer와 activation function을 추가하여
+복잡한 nonlinear 관계를 학습할 수 있게 만든다.
+
+---
+
+# 핵심 아이디어
+
+MLP는:
+
+- 입력층(Input Layer)
+- 은닉층(Hidden Layer)
+- 출력층(Output Layer)
+
+으로 구성된다.
+
+기본 구조:
+
+$$
+H = \phi(XW_1 + b_1)
+$$
+
+$$
+Y = HW_2 + b_2
+$$
+
+여기서:
+
+- $W$ : weight
+- $b$ : bias
+- $\phi$ : activation function
+
+이다.
+
+---
+
+# Activation Function이 왜 중요한가
+
+Activation function이 없다면 여러 linear layer를 쌓아도 결국 하나의 linear transformation과 같다.
+
+$$
+W_3(W_2(W_1x)) = Wx
+$$
+
+즉 hidden layer를 여러 개 추가해도 의미가 없다.
+
+Activation function이 추가되어야 nonlinear representation이 가능해진다.
+
+---
+
+# Sigmoid
+
+$$
+\sigma(x)=\frac{1}{1+e^{-x}}
+$$
+
+출력을 0~1 사이로 변환한다.
+
+---
+
+## 장점
+
+- 확률처럼 해석 가능
+- 초기 neural network에서 많이 사용됨
+
+---
+
+## 단점
+
+- Vanishing Gradient 발생
+- 큰 입력에서 gradient가 거의 0이 됨
+- 깊은 network 학습 어려움
+
+---
+
+# Tanh
+
+$$
+\tanh(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}}
+$$
+
+출력을 -1~1 범위로 변환한다.
+
+---
+
+## 장점
+
+- 출력 평균이 0 중심
+- sigmoid보다 gradient 흐름이 더 안정적
+
+---
+
+## 단점
+
+- 여전히 vanishing gradient 문제 존재
+
+---
+
+# ReLU
+
+$$
+\mathrm{ReLU}(x)=\max(0,x)
+$$
+
+현재 가장 많이 사용되는 activation function 중 하나.
+
+---
+
+## 장점
+
+- 계산이 매우 단순함
+- gradient 전달이 잘 됨
+- deep neural network 학습 가능하게 만듦
+
+ReLU의 등장은 deep learning 발전의 핵심 요소 중 하나였다.
+
+---
+
+## 단점
+
+- 음수 영역 gradient가 0
+- dying ReLU 문제 발생 가능
+
+---
+
+# Forward Propagation
+
+입력 데이터가 network를 통과하며 출력 생성.
+
+$$
+H = \phi(XW+b)
+$$
+
+각 layer에서:
+
+- linear transformation
+- activation function
+
+이 반복된다.
+
+---
+
+# Backpropagation
+
+loss를 줄이기 위해 gradient를 역방향으로 전달하며 weight를 업데이트한다.
+
+딥러닝 학습의 핵심 알고리즘이다.
+
+---
+
+# Vanishing Gradient Problem
+
+깊은 neural network에서 gradient가 매우 작아지는 문제.
+
+특히 sigmoid와 tanh에서 자주 발생한다.
+
+문제점:
+
+- 초기 layer 학습 어려움
+- 깊은 network 학습 불안정
+
+ReLU가 널리 사용된 중요한 이유 중 하나이다.
+
+---
+
+# Overfitting
+
+MLP는 parameter 수가 많아 overfitting 발생 가능성이 높다.
+
+훈련 데이터는 잘 맞지만 새로운 데이터 성능이 감소할 수 있다.
+
+---
+
+# 해결 방법
+
+## Weight Decay
+
+큰 weight 제한.
+
+---
+
+## Dropout
+
+학습 중 일부 neuron을 제거하여 일반화 성능 향상.
+
+---
+
+## Early Stopping
+
+validation 성능 감소 시 학습 중단.
+
+---
+
+# 장점
+
+## 1. Nonlinear 관계 학습 가능
+
+가장 중요한 장점.
+
+복잡한 데이터 패턴 표현 가능.
+
+---
+
+## 2. 표현력 증가
+
+Linear model보다 훨씬 강력한 representation 가능.
+
+---
+
+## 3. 딥러닝의 기본 구조
+
+대부분의 deep learning model은:
+
+- linear transformation
+- activation function
+
+반복 구조를 기반으로 한다.
+
+---
+
+# 단점
+
+## 1. Parameter 수 증가
+
+hidden layer가 많아질수록 parameter 증가.
+
+---
+
+## 2. Overfitting 발생 가능
+
+데이터보다 모델이 너무 복잡해질 수 있음.
+
+---
+
+## 3. 학습 어려움
+
+깊은 network에서는:
+
+- vanishing gradient
+- exploding gradient
+
+문제가 발생 가능.
+
+---
+
+# 중요한 흐름
+
+Linear Model의 한계
+→ Hidden Layer 추가
+→ Activation Function 필요
+→ Nonlinear Representation 가능
+→ Deep Neural Network 발전
+
+이라는 흐름으로 이해할 수 있다.
+
+---
+
+# 내가 이해한 내용
+
+MLP는 단순 linear model을 nonlinear하게 확장한 구조이다.
+
+특히 activation function이 핵심이며,
+ReLU의 등장으로 deep learning이 본격적으로 발전할 수 있었다.
+
+또한:
+
+- forward propagation
+- backpropagation
+- gradient
+- overfitting
+
+등 딥러닝 핵심 개념 대부분이 등장하는 중요한 구조이다.
