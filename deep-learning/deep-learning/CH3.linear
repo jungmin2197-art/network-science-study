@@ -1,0 +1,110 @@
+#CH3 Linear Neural networks for Regression
+
+가장 기본적 예측 모델-> 입력 feature와 출력사이 선형 관계 예측
+
+딥러닝 관점에서 가장 단순한 neural network 실제로: 입력층 가중치(weight) 출력층 구조만 존재 hidden layer가 없는 형태
+D2L에서는 이것을 통해:
+
+- gradient descent
+- loss function
+- optimization
+- parameter learning
+
+같은 딥러닝 핵심 개념을 가장 단순한 형태로 설명한다
+
+모델은 w와 b를 학습하여 실제 y와 예측값 차이를 최소화
+
+장점: 단순해서 과정이해 optimizatiojn 이해 backpropagation 이해에 좋다
+weight 의미 쉽게 해석가능 특정 feature가 결과에 얼마나 영향을 주는지 확인 계산량이 적다.-> 실무에서 대규모 모델 학습 전 baseline
+
+단점: 선형관계만 표현 가능 현실은 nonlinear, 구조정보 표현력부족 -> 뒤에서 MLP CNN RNN Transformer
+### 3. Overfitting 문제 발생 가능
+
+feature 수가 많아지면 훈련 데이터에 과도하게 맞춰질 수 있다.
+
+이를 해결하기 위해 regularization 기법이 사용된다.
+
+---
+
+# Weight Decay (L2 Regularization)
+
+모델의 weight가 너무 커지는 것을 방지하는 방법.
+
+loss function에 패널티를 추가한다.
+
+:contentReference[oaicite:1]{index=1}
+
+큰 weight에 penalty를 주어 모델이 지나치게 복잡해지는 것을 막는다.
+
+---
+
+## Weight Decay의 장점
+
+- overfitting 감소
+- 일반화 성능 향상
+- 안정적인 학습 가능
+
+딥러닝에서 가장 많이 사용하는 regularization 방법 중 하나이다.
+
+---
+
+# Ridge Regression (L2)
+
+L2 norm 기반 regularization.
+
+:contentReference[oaicite:2]{index=2}
+
+특징:
+
+- weight를 전체적으로 작게 만든다.
+- 모델을 안정적으로 만든다.
+- 딥러닝의 weight decay와 매우 유사하다.
+
+---
+
+# Lasso Regression (L1)
+
+L1 norm 기반 regularization.
+
+:contentReference[oaicite:3]{index=3}
+
+특징:
+
+- 일부 weight를 0으로 만든다.
+- feature selection 효과가 있다.
+- sparse한 모델 생성 가능.
+
+---
+
+# Ridge와 Lasso 차이
+
+## Ridge (L2)
+
+- 모든 feature를 조금씩 사용
+- weight를 작게 만듦
+- 안정적
+
+## Lasso (L1)
+
+- 중요하지 않은 feature 제거 가능
+- sparse model 생성
+- feature selection 효과 존재
+
+---
+
+## 중요한 흐름
+
+Linear Regression은 가장 단순한 모델이지만:
+
+- optimization
+- gradient descent
+- regularization
+- generalization
+
+같은 딥러닝 핵심 개념의 출발점이 된다.
+
+복잡한 neural network 역시 결국:
+
+> 선형 변환 + 비선형 함수의 반복
+
+구조로 이루어진다.
