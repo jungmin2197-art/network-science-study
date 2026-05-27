@@ -1,0 +1,379 @@
+# Convolutional Neural Networks (CNN)
+
+## 왜 CNN이 등장했는가
+
+기존 MLP는 이미지 처리에서 큰 문제가 있었다.
+
+예를 들어 224×224 RGB 이미지를 입력으로 사용하면:
+
+$$
+224 \times 224 \times 3 = 150528
+$$
+
+개의 input feature가 필요하다.
+
+Fully Connected Layer를 사용하면 parameter 수가 너무 많아진다.
+
+문제점:
+
+- 계산량 증가
+- 메모리 사용 증가
+- overfitting 발생
+- 공간 구조 정보 손실
+
+또한 이미지에서는:
+
+- edge
+- texture
+- shape
+
+같은 local pattern이 중요하지만 MLP는 이를 효과적으로 학습하지 못한다.
+
+CNN은 이러한 문제를 해결하기 위해 등장하였다.
+
+---
+
+# 핵심 아이디어
+
+CNN은:
+
+- local connectivity
+- parameter sharing
+- spatial structure preservation
+
+개념을 사용한다.
+
+즉 이미지의 작은 영역(local region)을 학습하며,
+같은 kernel을 전체 이미지에 반복 적용한다.
+
+---
+
+# Convolution
+
+CNN의 핵심 연산.
+
+입력 이미지 위를 kernel(filter)이 이동하며 feature를 추출한다.
+
+---
+
+# Kernel (Filter)
+
+작은 weight matrix.
+
+예:
+
+$$
+3 \times 3
+$$
+
+또는
+
+$$
+5 \times 5
+$$
+
+크기를 많이 사용한다.
+
+Kernel은:
+
+- edge
+- texture
+- pattern
+
+등을 감지한다.
+
+---
+
+# Edge Detection
+
+CNN 초기 layer는 주로 edge를 학습한다.
+
+예를 들어:
+
+$$
+\begin{bmatrix}
+-1 & -1 & -1 \\
+0 & 0 & 0 \\
+1 & 1 & 1
+\end{bmatrix}
+$$
+
+같은 kernel은 수평 edge를 감지한다.
+
+즉 convolution은 단순 연산이 아니라:
+
+> "특징(feature) 추출 과정"
+
+이라고 볼 수 있다.
+
+---
+
+# Feature Map
+
+Convolution 결과 생성되는 출력.
+
+각 kernel은 서로 다른 특징을 학습한다.
+
+예:
+
+- edge
+- corner
+- texture
+
+등.
+
+---
+
+# Receptive Field
+
+특정 neuron이 바라보는 입력 영역 크기.
+
+CNN layer가 깊어질수록 receptive field가 증가한다.
+
+즉 deeper layer에서는:
+
+- 더 넓은 영역
+- 더 복잡한 패턴
+
+을 학습 가능하다.
+
+초기 layer:
+
+- edge
+- texture
+
+후반 layer:
+
+- object shape
+- semantic feature
+
+를 학습한다.
+
+---
+
+# Padding
+
+Convolution 시 가장자리 정보 손실 방지를 위해 입력 주변에 값을 추가하는 방법.
+
+주로 0 padding 사용.
+
+---
+
+## 왜 필요한가
+
+Padding이 없으면 layer를 거칠수록 feature map 크기가 계속 감소한다.
+
+예:
+
+$$
+5 \times 5
+\rightarrow
+3 \times 3
+\rightarrow
+1 \times 1
+$$
+
+정보 손실이 심해질 수 있다.
+
+Padding은:
+
+- spatial information 유지
+- edge 정보 보존
+
+역할을 한다.
+
+---
+
+# Stride
+
+Kernel이 이동하는 간격.
+
+---
+
+## 특징
+
+### Stride = 1
+
+한 칸씩 이동.
+
+---
+
+### Stride = 2
+
+두 칸씩 이동.
+
+출력 크기가 감소한다.
+
+Stride는:
+
+- 연산량 감소
+- downsampling
+
+효과를 가진다.
+
+---
+
+# Pooling
+
+Feature map 크기를 줄이는 방법.
+
+대표적으로:
+
+- Max Pooling
+- Average Pooling
+
+사용.
+
+---
+
+# Max Pooling
+
+가장 큰 값 선택.
+
+예:
+
+$$
+\begin{bmatrix}
+1 & 2 \\
+5 & 3
+\end{bmatrix}
+\rightarrow 5
+$$
+
+---
+
+## 장점
+
+- 중요한 feature 강조
+- noise 감소
+- 계산량 감소
+
+CNN에서 가장 많이 사용된다.
+
+---
+
+# Average Pooling
+
+평균값 사용.
+
+Max Pooling보다 feature를 부드럽게 유지한다.
+
+---
+
+# CNN의 장점
+
+## 1. Parameter Sharing
+
+같은 kernel을 반복 사용.
+
+parameter 수 감소.
+
+---
+
+## 2. Spatial Structure 유지
+
+이미지의 위치 정보 활용 가능.
+
+---
+
+## 3. Feature 자동 추출
+
+직접 feature engineering 필요 감소.
+
+---
+
+## 4. 이미지 처리 성능 우수
+
+Computer Vision 분야 핵심 모델.
+
+---
+
+# CNN의 단점
+
+## 1. 계산량 큼
+
+Deep CNN은 연산량이 매우 많다.
+
+---
+
+## 2. 데이터 많이 필요
+
+성능 좋은 CNN 학습에는 대규모 데이터셋 필요.
+
+---
+
+## 3. 위치 변화에 완전히 강하지 않음
+
+Translation invariance가 완벽하지 않다.
+
+---
+
+# LeNet
+
+초기 CNN 구조 중 하나.
+
+Yann LeCun이 제안.
+
+손글씨 숫자 인식(MNIST)을 위해 설계되었다.
+
+---
+
+# LeNet 구조
+
+기본 구조:
+
+```text
+Input
+→ Convolution
+→ Pooling
+→ Convolution
+→ Pooling
+→ Fully Connected Layer
+→ Output
+```
+
+---
+
+# LeNet의 중요성
+
+LeNet은:
+
+- convolution
+- pooling
+- hierarchical feature extraction
+
+개념을 실제로 성공시킨 초기 CNN 모델이다.
+
+현대 CNN 구조의 기초가 되었다.
+
+---
+
+# CNN의 중요한 흐름
+
+MLP의 한계
+→ 이미지 구조 활용 어려움
+→ Convolution 등장
+→ Local Feature 학습
+→ Pooling으로 차원 축소
+→ Deep CNN 발전
+
+이라는 흐름으로 이해할 수 있다.
+
+---
+
+# 내가 이해한 내용
+
+CNN은 이미지의 spatial structure를 유지하며 local feature를 학습하는 neural network이다.
+
+특히:
+
+- kernel
+- edge detection
+- receptive field
+- padding
+- stride
+- pooling
+
+개념이 핵심이다.
+
+또한 LeNet은 CNN 구조의 시작점 역할을 한 중요한 모델이다.
