@@ -1,1 +1,15 @@
+# node2vec: Scalable Feature Learning for Networks ( KDD 2016)
+용어 정리
+Homophily graph: 커뮤니티에 기반하고 동일 커뮤니티 속한 노드들이 서로 유사 ex: u와 s1 s2 s3 s4 유사
+Structural Equivalence: 구조적 기능이나 역할 동일 ex: u s6
 
+왜 등장?
+기존 머신러닝은 그래프 데이터를 다루기 위해서 사람이 직접 feature 설계
+단점: 비용이 많이 들고 일반화 어렵고 그래프 적용 어렵다 
+
+아이디어: node2vec는 그래프의 노드를 벡터 공간으로 변환하는 것 = 노드 -> Embedding vector 변환 수행
+비슷한 역할 하는 노드는 가까운 벡터로 학습
+
+왜 중요?
+Node2vec 이전에도 Deepwalk가 존재 but Randomwalk 방식이 고정되어있었음. 네트워크 이웃 정의방식이 경직-> 복잡한 연결에 둔감하게 반응, 정보 손실
+node2vec는 BFS(너비우선)  DFS(깊이우선) 사이를
