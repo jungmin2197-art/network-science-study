@@ -1,1 +1,167 @@
 
+# METIS Graph Partitioning Algorithm
+
+---
+
+## METIS란?
+
+METIS는 **대규모 그래프를 여러 개의 균형 잡힌 Subgraph(Cluster)로 빠르게 분할하는 Graph Partitioning 알고리즘**이다. Cluster-GCN에서는 그래프를 Mini-batch 단위로 학습하기 위해 METIS를 이용하여 그래프를 여러 개의 Cluster로 분할한다.
+
+---
+
+## 왜 필요한가?
+
+예를 들어 100만 개의 Node를 가진 그래프가 있다고 하자. 기존 GCN은 전체 그래프를 한 번에 메모리에 올려 학습해야 하기 때문에 GPU 메모리 사용량이 매우 커진다.
+
+```text
+100만 Node
+      ↓
+한 번에 학습
+```
+
+반면 METIS는 그래프를 여러 개의 작은 Cluster로 나눈다.
+
+```text
+100만 Node
+      ↓
+ ┌─────────┐
+ │Cluster 1│
+ │Cluster 2│
+ │Cluster 3│
+ │   ...   │
+ │Cluster N│
+ └─────────┘
+```
+
+이렇게 생성된 각 Cluster를 하나의 Mini-batch처럼 사용하여 메모리 부담을 크게 줄일 수 있다.
+
+---
+
+## METIS의 목표
+
+좋은 Graph Partition은 다음 두 가지 조건을 만족해야 한다.
+
+### 1. Balanced Partition
+
+각 Cluster의 크기가 최대한 비슷해야 한다.
+
+```text
+100 Nodes
+    ↓
+50      50
+```
+
+균형 잡힌 Partition은 Mini-batch 간 계산량 차이를 줄여 안정적인 학습을 가능하게 한다.
+
+### 2. Edge Cut 최소화
+
+가능한 한 연결된 Node들이 같은 Cluster 안에 포함되도록 분할해야 한다.
+
+```text
+Cluster A
+
+A --- B --- C
+
+Cluster B
+
+D --- E --- F
+```
+
+즉, **Cluster 내부 연결은 최대화하고 Cluster 간 연결은 최소화**하는 것이 목표이다. 이를 **Edge Cut 최소화**라고 한다.
+
+---
+
+## METIS는 어떻게 동작할까?
+
+METIS는 크게 세 단계로 동작한다.
+
+### 1. Coarsening
+
+서로 강하게 연결된 Node들을 하나로 합쳐 그래프를 점점 작은 그래프로 축소한다.
+
+```text
+Original Graph
+      ↓
+ Smaller Graph
+      ↓
+Even Smaller Graph
+```
+
+### 2. Partitioning
+
+가장 작은 그래프에서 균형 잡힌 Partition을 수행한다.
+
+```text
+Small Graph
+      ↓
+ Partition
+```
+
+### 3. Uncoarsening & Refinement
+
+Partition 결과를 원래 그래프로 복원하면서 Partition을 조금씩 수정하여 더 좋은 결과를 만든다.
+
+```text
+Partition
+     ↓
+Original Graph
+     ↓
+ Refinement
+```
+
+즉, 처음부터 큰 그래프를 직접 분할하는 것이 아니라 **작게 만든 후 분할하고, 다시 복원하면서 Partition을 개선하는 방식**이다.
+
+---
+
+## Cluster-GCN에서의 역할
+
+Cluster-GCN은 Graph Convolution 연산 자체를 변경하지 않는다. 대신 METIS를 이용해 그래프를 여러 개의 Cluster로 분할한 뒤, 각 Cluster를 하나의 Mini-batch로 사용하여 GCN을 학습한다.
+
+```text
+Large Graph
+      ↓
+    METIS
+      ↓
+   Cluster
+      ↓
+ GCN Training
+```
+
+이 덕분에 대규모 그래프도 GPU 메모리 한계를 넘지 않고 효율적으로 학습할 수 있다.
+
+---
+
+## 장점
+
+- **빠른 Graph Partition** : 수백만 개의 Node를 가진 그래프도 빠르게 분할할 수 있다.
+- **Balanced Partition** : 각 Cluster의 크기를 균형 있게 유지한다.
+- **Edge Cut 최소화** : Neighbor가 같은 Cluster에 포함될 가능성을 높여 정보 손실을 줄인다.
+- **Mini-batch Learning 지원** : Cluster 단위 학습을 통해 메모리 사용량을 크게 줄일 수 있다.
+
+---
+
+## 한계
+
+- **Preprocessing 필요** : 학습 전에 Graph Partition을 수행해야 한다.
+- **Dynamic Graph에 부적합** : 그래프 구조가 자주 변경되면 Partition을 다시 수행해야 한다.
+- **Partition 품질에 의존** : Partition 결과가 좋지 않으면 Cluster 간 정보 손실이 증가할 수 있다.
+
+---
+
+## 내가 이해한 내용
+
+처음에는 METIS가 단순히 그래프를 여러 개로 나누는 알고리즘이라고 생각했다. 하지만 핵심은 **Node 수를 균등하게 분할하면서도 연결된 Node들이 최대한 같은 Cluster에 포함되도록 만드는 것**이다. 즉, 단순한 분할이 아니라 **Cluster 내부 연결은 유지하고 Cluster 간 연결은 최소화**하는 것이 목표이며, 이러한 특성 덕분에 Cluster-GCN은 Neighbor 정보를 최대한 보존하면서도 효율적인 Mini-batch 학습을 수행할 수 있다.
+
+---
+
+## 핵심 키워드
+
+- METIS
+- Graph Partitioning
+- Coarsening
+- Partitioning
+- Uncoarsening
+- Refinement
+- Edge Cut
+- Balanced Partition
+- Mini-batch Learning
