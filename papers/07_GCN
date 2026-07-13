@@ -81,7 +81,7 @@ Embedding 생성과 Classification을 동시에 수행
 # 한계
 
 1. Oversmoothing
-Later가 깊어질수록 Node Representation이 서로 비슷해지는 문제가 발생
+Layer가 깊어질수록 Node Representation이 서로 비슷해지는 문제가 발생
 
 2. Homophily 가정
 GCN은 연결된 Node가 비슷한 Feature를 가진다고 가정. 따라서 Heterophily 에서는 성능이 감소 할 수 있다.
