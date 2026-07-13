@@ -1,1 +1,1 @@
-Dive into deep learning 3절 정리
+Dive into deep learning 정리
