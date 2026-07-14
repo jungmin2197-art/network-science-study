@@ -1,27 +1,23 @@
+## 📖 Learning Flow
+
+```text
 MLP
 │
-├── 이미지를 1차원으로 펼쳐야 함
-├── Parameter가 너무 많음
-├── 위치 정보가 사라짐
-└── 공간 정보를 학습하기 어려움
-        │
-        ▼
+├── 한계
+│   ├── 이미지를 1차원으로 펼쳐야 함
+│   ├── Parameter 수가 너무 많음
+│   ├── 위치 정보(Spatial Information) 손실
+│   └── 공간적 특징을 효과적으로 학습하기 어려움
+│
+▼
 Convolution
-        │
-        ▼
-Kernel(Filter)
-        │
-        ▼
-Feature Map
-        │
-        ▼
-Padding & Stride
-        │
-        ▼
-Multiple Channels
-        │
-        ▼
-Pooling
-        │
-        ▼
+│
+├── Kernel (Filter)
+├── Feature Map
+├── Padding & Stride
+├── Multiple Channels
+├── Pooling
+│
+▼
 LeNet (최초의 CNN)
+```
