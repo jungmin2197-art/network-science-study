@@ -1,0 +1,339 @@
+# 10.1 Long Short-Term Memory (LSTM)
+
+## 논문
+
+**Long Short-Term Memory**
+
+- Sepp Hochreiter
+- Jürgen Schmidhuber
+
+Neural Computation, 1997
+
+---
+
+# 왜 등장했는가?
+
+기본 RNN은 Hidden State를 이용하여 이전 정보를 기억할 수 있었지만, Sequence가 길어질수록 **Gradient Vanishing** 문제가 발생하였다.
+
+이로 인해 오래된 정보를 기억하지 못하는 **Long-term Dependency Problem**이 발생하였다.
+
+예를 들어
+
+```
+The movie that I watched yesterday was ...
+
+amazing
+```
+
+에서
+
+"movie"와 "amazing"의 관계처럼 멀리 떨어진 정보를 학습하기 어렵다.
+
+LSTM은 이러한 문제를 해결하기 위해 **Memory Cell과 Gate 구조**를 도입하였다.
+
+---
+
+# 기존 RNN의 한계
+
+기본 RNN은 Hidden State 하나만을 이용하여 정보를 전달한다.
+
+```
+Input
+
+↓
+
+Hidden State
+
+↓
+
+Output
+```
+
+Sequence가 길어질수록
+
+- Gradient Vanishing
+- Long-term Dependency
+- 정보 손실
+
+문제가 발생한다.
+
+---
+
+# 핵심 아이디어
+
+LSTM의 핵심은 매우 단순하다.
+
+> **중요한 정보는 오래 기억하고, 필요 없는 정보는 잊도록 하자.**
+
+이를 위해
+
+- Cell State
+- Forget Gate
+- Input Gate
+- Output Gate
+
+를 사용한다.
+
+---
+
+# LSTM 구조
+
+LSTM은 Hidden State 외에도
+
+Cell State라는 새로운 메모리를 가진다.
+
+```text
+              Cell State
+────────────────────────────────▶
+
+        ↑          ↑          ↑
+     Forget     Input      Output
+      Gate       Gate       Gate
+
+            LSTM Cell
+
+Input ─────────────────────────▶ Hidden State
+```
+
+Cell State는 장기 기억(Long-term Memory),
+
+Hidden State는 현재 출력(Short-term Memory) 역할을 한다.
+
+---
+
+# Cell State
+
+Cell State는
+
+LSTM이 오래 기억해야 하는 정보를 저장하는 메모리이다.
+
+기본 RNN에서는
+
+Hidden State 하나만 존재하였다.
+
+LSTM에서는
+
+```
+Hidden State
+
++
+
+Cell State
+```
+
+를 함께 사용한다.
+
+Cell State는 필요한 정보는 유지하고,
+
+불필요한 정보는 제거하면서
+
+Sequence 전체를 따라 전달된다.
+
+---
+
+# Forget Gate
+
+Forget Gate는
+
+기존 Cell State에서
+
+어떤 정보를 버릴지 결정한다.
+
+수식은
+
+$$
+f_t=\sigma(W_f[h_{t-1},x_t]+b_f)
+$$
+
+이다.
+
+출력은
+
+0~1 사이의 값을 가진다.
+
+- 0 → 완전히 삭제
+- 1 → 그대로 유지
+
+즉,
+
+Forget Gate는
+
+**기억을 얼마나 유지할지 결정하는 Gate**이다.
+
+---
+
+# Input Gate
+
+Input Gate는
+
+새로운 정보를 Cell State에 얼마나 저장할지를 결정한다.
+
+수식은
+
+$$
+i_t=\sigma(W_i[h_{t-1},x_t]+b_i)
+$$
+
+새로운 후보 메모리는
+
+$$
+\tilde{C}_t=\tanh(W_c[h_{t-1},x_t]+b_c)
+$$
+
+이다.
+
+최종적으로
+
+새로운 정보를 Cell State에 추가한다.
+
+---
+
+# Cell State Update
+
+Forget Gate와 Input Gate를 이용하여
+
+Cell State를 업데이트한다.
+
+$$
+C_t=f_t\odot C_{t-1}+i_t\odot\tilde{C}_t
+$$
+
+즉,
+
+```
+기존 기억 유지
+
++
+
+새로운 기억 추가
+```
+
+를 동시에 수행한다.
+
+이 식이 LSTM에서 가장 중요한 수식이다.
+
+---
+
+# Output Gate
+
+Output Gate는
+
+Cell State 중
+
+현재 출력으로 사용할 정보를 결정한다.
+
+수식은
+
+$$
+o_t=\sigma(W_o[h_{t-1},x_t]+b_o)
+$$
+
+최종 Hidden State는
+
+$$
+h_t=o_t\odot\tanh(C_t)
+$$
+
+로 계산된다.
+
+즉,
+
+Cell State 전체를 출력하는 것이 아니라,
+
+필요한 정보만 Hidden State로 전달한다.
+
+---
+
+# Gate의 역할
+
+| Gate | 역할 |
+|-------|------|
+| Forget Gate | 필요 없는 정보 삭제 |
+| Input Gate | 새로운 정보 저장 |
+| Output Gate | 출력할 정보 선택 |
+
+---
+
+# LSTM의 전체 흐름
+
+```text
+Input
+   │
+   ▼
+Forget Gate
+   │
+   ▼
+Input Gate
+   │
+   ▼
+Cell State Update
+   │
+   ▼
+Output Gate
+   │
+   ▼
+Hidden State
+```
+
+---
+
+# 장점
+
+- Long-term Dependency 해결
+- Gradient Vanishing 완화
+- 긴 Sequence 처리 가능
+- 문맥(Context) 유지
+- 다양한 NLP 작업에 활용
+
+---
+
+# 한계
+
+- 구조가 복잡하다.
+- Parameter 수가 많다.
+- 학습 속도가 느리다.
+- 계산량이 크다.
+
+이러한 단점을 개선하기 위해 이후 **GRU**가 제안되었다.
+
+---
+
+# 후속 연구에 미친 영향
+
+LSTM은 오랫동안 Sequence Modeling의 표준 모델이었다.
+
+이후
+
+- GRU
+- Seq2Seq
+- Encoder-Decoder
+- Attention
+
+등 다양한 모델의 기반이 되었다.
+
+Transformer가 등장하기 전까지 자연어 처리와 기계 번역 분야에서 가장 널리 사용된 모델이었다.
+
+---
+
+# 내가 이해한 내용
+
+LSTM은 기본 RNN의 Gradient Vanishing 문제를 해결하기 위해 **Cell State와 Gate 구조**를 도입한 모델이다.
+
+가장 중요한 특징은 정보를 모두 기억하는 것이 아니라 **Forget Gate로 불필요한 정보를 제거하고, Input Gate로 새로운 정보를 저장하며, Output Gate를 통해 필요한 정보만 출력한다는 점**이다.
+
+즉, LSTM은 **"무엇을 기억하고 무엇을 잊을지 스스로 학습하는 RNN"**이라고 이해할 수 있다.
+
+---
+
+# 핵심 키워드
+
+- LSTM
+- Cell State
+- Hidden State
+- Forget Gate
+- Input Gate
+- Output Gate
+- Long-term Dependency
+- Gradient Vanishing
+- Memory Cell
+- Sequence Modeling
