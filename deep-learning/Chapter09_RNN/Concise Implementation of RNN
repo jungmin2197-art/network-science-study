@@ -1,0 +1,298 @@
+# 9.6 Concise Implementation of Recurrent Neural Networks
+
+---
+
+# 왜 간결한 구현이 필요한가?
+
+앞 절에서는 RNN을 직접 구현하여 Hidden State의 업데이트 과정과 학습 원리를 이해하였다.
+
+하지만 실제 프로젝트에서는 모든 RNN을 직접 구현하지 않는다.
+
+PyTorch와 TensorFlow에서는 이미 최적화된 RNN Layer를 제공하며, 이를 이용하면 훨씬 간단하게 모델을 구현할 수 있다.
+
+---
+
+# 직접 구현과 간결한 구현의 차이
+
+직접 구현에서는
+
+- Hidden State 계산
+- Weight 정의
+- Forward 과정
+- BPTT
+- Parameter Update
+
+를 모두 직접 작성해야 한다.
+
+반면 PyTorch에서는
+
+```python
+nn.RNN()
+```
+
+하나만으로 RNN Layer를 생성할 수 있다.
+
+즉,
+
+```
+직접 구현
+
+↓
+
+복잡한 계산
+
+↓
+
+많은 코드
+
+------------------------
+
+PyTorch
+
+↓
+
+nn.RNN
+
+↓
+
+간단한 구현
+```
+
+---
+
+# RNN Layer
+
+PyTorch의 RNN Layer는
+
+Hidden State 계산을 내부적으로 수행한다.
+
+입력은
+
+```
+Sequence
+
+↓
+
+RNN Layer
+
+↓
+
+Hidden State
+
+↓
+
+Output
+```
+
+과정을 자동으로 수행한다.
+
+사용자는
+
+- 입력 데이터
+- Hidden Size
+- Layer 개수
+
+등만 설정하면 된다.
+
+---
+
+# RNN의 입력 형태
+
+PyTorch의 RNN은
+
+다음과 같은 형태의 입력을 사용한다.
+
+```
+(Sequence Length,
+ Batch Size,
+ Input Size)
+```
+
+예를 들어
+
+```
+Sequence Length = 35
+
+Batch Size = 32
+
+Embedding Size = 256
+```
+
+라면
+
+입력 Tensor의 형태는
+
+```
+(35, 32, 256)
+```
+
+이 된다.
+
+---
+
+# Hidden State
+
+RNN Layer는
+
+출력(Output)과 함께
+
+마지막 Hidden State도 반환한다.
+
+```
+Input
+
+↓
+
+RNN
+
+↓
+
+Output
+
++
+
+Hidden State
+```
+
+Hidden State는
+
+다음 Sequence를 처리할 때
+
+초기 Hidden State로 사용할 수 있다.
+
+---
+
+# Language Model
+
+RNN Layer 뒤에는
+
+Linear Layer를 연결하여
+
+각 Time Step마다
+
+다음 단어를 예측한다.
+
+```
+Embedding
+
+↓
+
+RNN
+
+↓
+
+Linear
+
+↓
+
+Softmax
+```
+
+이 구조가 가장 기본적인 RNN Language Model이다.
+
+---
+
+# Training
+
+학습 과정은
+
+직접 구현과 동일하다.
+
+```
+Forward
+
+↓
+
+Loss
+
+↓
+
+Backward
+
+↓
+
+Optimizer
+
+↓
+
+Parameter Update
+```
+
+단,
+
+Backward 과정(BPTT)은
+
+PyTorch의 Autograd가 자동으로 수행한다.
+
+즉,
+
+사용자가 Gradient를 직접 계산할 필요가 없다.
+
+---
+
+# 직접 구현과 비교
+
+| 직접 구현 | PyTorch 구현 |
+|-----------|--------------|
+| Hidden State 직접 계산 | 자동 계산 |
+| Weight 직접 정의 | 내부에서 관리 |
+| BPTT 직접 구현 | Autograd 수행 |
+| 코드가 길다 | 코드가 매우 간결하다 |
+| 학습 원리 이해에 적합 | 실제 프로젝트에 적합 |
+
+---
+
+# 장점
+
+- 코드가 매우 간단하다.
+- GPU 사용이 쉽다.
+- 최적화가 잘 되어 있다.
+- 실제 프로젝트에서 사용된다.
+- 다양한 RNN 구조(LSTM, GRU)도 동일한 방식으로 사용할 수 있다.
+
+---
+
+# 한계
+
+- 내부 동작이 보이지 않는다.
+- 학습 원리를 이해하기 어렵다.
+- 디버깅이 어려울 수 있다.
+
+따라서 RNN을 처음 공부할 때는 직접 구현을 이해한 뒤 PyTorch 구현을 사용하는 것이 좋다.
+
+---
+
+# 후속 연구에 미친 영향
+
+PyTorch의 RNN 인터페이스는
+
+- RNN
+- LSTM
+- GRU
+
+모두 동일한 방식으로 사용할 수 있도록 설계되었다.
+
+이러한 추상화 덕분에 연구자는 모델 구조 설계에 집중할 수 있으며, 구현 복잡성을 크게 줄일 수 있다.
+
+---
+
+# 내가 이해한 내용
+
+9.5에서는 RNN의 내부 동작을 직접 구현하면서 Hidden State와 BPTT를 이해하는 것이 목표였다.
+
+반면 9.6에서는 이미 구현된 RNN Layer를 이용하여 동일한 기능을 훨씬 간단하게 구현할 수 있음을 보여준다.
+
+즉, **직접 구현은 원리를 이해하기 위한 과정이고, 간결한 구현은 실제 프로젝트에서 사용하는 방식**이라고 이해할 수 있다.
+
+---
+
+# 핵심 키워드
+
+- PyTorch RNN
+- nn.RNN
+- Hidden State
+- Autograd
+- BPTT
+- Language Model
+- Sequence Input
+- Concise Implementation
